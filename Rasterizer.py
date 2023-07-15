@@ -1,7 +1,7 @@
 from gl import Renderer, V2,V3, color
 import random, shaders
-width = 7000
-height = 10000
+width = 500
+height = 500
 
 rend = Renderer(width, height)
 
@@ -36,7 +36,10 @@ rend = Renderer(width, height)
 rend.vertexShader=shaders.vertexShader
 rend.fragmentShader=shaders.fragmentShader
 
-rend.glLoadModel("face.obj", translate=(width/6, height/4, 0), scale=(1500,1500,1500))
+#Right: -90,0,90
+#Front: -90,0,0
+#Left: -90,0,-90
+rend.glLoadModel("skull.obj", translate=(width/2, height/8, 0), scale=(15,15,15), rotate=(-90,0,-90))
 
 """ verts = [V3(0,0,0),
         V3(50,0,0),
@@ -47,4 +50,4 @@ rend.glModelMatrix(translate=(width/2, height/2, 0),
                    scale=(5,3,1)) """
 rend.glRender()
 
-rend.glFinish("output.bmp") 
+rend.glFinish("Left.bmp") 
