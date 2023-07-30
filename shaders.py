@@ -12,5 +12,10 @@ def vertexShader(vertex, **kwargs):
     return vt
 
 def fragmentShader(**kwargs):
-    color = (1,1,1)
-    return color
+      texCoords = kwargs["texCoords"]
+      texture = kwargs["texture"]
+      if texture != None:
+            color = texture.getColor(texCoords[0], texCoords[1])
+      else:
+            color = (1,1,1)
+      return color

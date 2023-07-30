@@ -1,7 +1,7 @@
 from gl import Renderer, V2,V3, color
 import random, shaders
-width = 1920
-height = 1080
+width = 1500
+height = 1500
 
 rend = Renderer(width, height)
 
@@ -9,10 +9,33 @@ rend.vertexShader=shaders.vertexShader
 rend.fragmentShader=shaders.fragmentShader
 
 #Right: -90,0,90
-#Front: -90,0,0
+#Back: -90,0,0
+#Front: -90,0,-180
 #Left: -90,0,-90
-rend.glLoadModel("skull.obj", translate=(width/2, height/8, 0), scale=(30,30,30), rotate=(-90,0,90))
+rend.glLoadModel(filename="skull.obj", 
+                 textureName="Texture.bmp", 
+                 translate=(width/4, height/2, 0), 
+                 scale=(23,23,23), 
+                 rotate=(-90,0,-180))
 
-rend.glRender()
+rend.glLoadModel(filename="skull.obj", 
+                 textureName="Texture.bmp", 
+                 translate=(width-(width/4), height/2, 0), 
+                 scale=(23,23,23), 
+                 rotate=(-90,0,0))
 
-rend.glFinish("Right.bmp") 
+rend.glLoadModel(filename="skull.obj", 
+                 textureName="Texture.bmp", 
+                 translate=(width/4, height/32, 0), 
+                 scale=(23,23,23), 
+                 rotate=(-90,0,-90))
+
+rend.glLoadModel(filename="skull.obj", 
+                 textureName="Texture.bmp", 
+                 translate=(width-(width/4), height/32, 0), 
+                 scale=(23,23,23), 
+                 rotate=(-90,0,90))
+
+rend.glRender() 
+
+rend.glFinish("Test.bmp") 
