@@ -56,6 +56,10 @@ class Renderer(object):
         self.primitiveType = TRIANGLES
         self.vertexBuffer=[ ]
         self.activeTexture = None
+        self.glViewport(0,0,self.width,self.height)
+        self.glCameraMatrix()
+        self.glProjectionMatrix()
+        
 
     def glAddVertices(self, vertices):
         for vert in vertices:
@@ -142,6 +146,42 @@ class Renderer(object):
         self.glLine(v0,v1,clr or self.currColor)
         self.glLine(v1,v2,clr or self.currColor)
         self.glLine(v2,v0,clr or self.currColor)
+
+    def glViewport(self, x,y,width,height):
+        self.vpX = x
+        self.vpY = y
+        self.vpWidth = width
+        self.vpHeight = height
+
+        self.vpMatrix = [[self.vpWidth/2,0,0,self.vpX + self.vpWidth/2],
+                         [0,self.vpHeight/2,0,self.vpY + self.vpHeight/2],
+                         [0,0,0.5,0.5],
+                         [0,0,0,1]]
+
+    def glCameraMatrix(self, translate=(0,0,0), rotate=(0,0,0)):
+        self.camMatrix = self.glModelMatrix(translate, rotate)
+        self.viewMatrix = mm.inverseMat(self.camMatrix)
+
+    def glLookAt(self, camPos = (0,0,0), eyePos=(0,0,0)):
+        forward = mm.normVec(mm.subVec(camPos, eyePos))
+        right = mm.normVec(mm.crossProd((0,1,0), forward))
+        up = mm.normVec(mm.crossProd(forward, right))
+
+        self.camMatrix = [[right[0],up[0],forward[0],camPos[0]],
+                          [right[1],up[1],forward[1],camPos[1]],
+                          [right[2],up[2],forward[2],camPos[2]],
+                          [0,0,0,1]]
+        
+        self.viewMatrix = mm.inverseMat(self.camMatrix)
+
+    def glProjectionMatrix(self, fov=60, n=0.1, f=1000):
+        aspectRatio = self.vpWidth/self.vpHeight
+        t = math.tan(math.radians(fov)/2) * n
+        r = t * aspectRatio
+        self.projectionMatrix = [[n/r,0,0,0],
+                                 [0,n/t,0,0],
+                                 [0,0,-(f+n)/(f-n),-(2*f*n)/(f-n)],
+                                 [0,0,-1,0]]
 
     def glModelMatrix(self, translate=(0,0,0), rotate=(0,0,0), scale=(1,1,1)):
         translateMat = [[1,0,0,translate[0]],
@@ -256,11 +296,27 @@ class Renderer(object):
                     v3=model.vertices[face[3][0] -1]
 
                 if self.vertexShader:
-                    v0=self.vertexShader(v0, modelMatrix=mMatrix)
-                    v1=self.vertexShader(v1, modelMatrix=mMatrix)
-                    v2=self.vertexShader(v2, modelMatrix=mMatrix)
+                    v0=self.vertexShader(v0, 
+                                         modelMatrix=mMatrix,
+                                         viewMatrix=self.viewMatrix,
+                                         projectionMatrix=self.projectionMatrix,
+                                         vpMatrix=self.vpMatrix)
+                    v1=self.vertexShader(v1, 
+                                         modelMatrix=mMatrix,
+                                         viewMatrix=self.viewMatrix,
+                                         projectionMatrix=self.projectionMatrix,
+                                         vpMatrix=self.vpMatrix)
+                    v2=self.vertexShader(v2, 
+                                         modelMatrix=mMatrix,
+                                         viewMatrix=self.viewMatrix,
+                                         projectionMatrix=self.projectionMatrix,
+                                         vpMatrix=self.vpMatrix)
                     if vertCount == 4:
-                        v3=self.vertexShader(v3, modelMatrix=mMatrix)
+                        v3=self.vertexShader(v3, 
+                                         modelMatrix=mMatrix,
+                                         viewMatrix=self.viewMatrix,
+                                         projectionMatrix=self.projectionMatrix,
+                                         vpMatrix=self.vpMatrix)
                 
                 transformedVerts.append(v0)
                 transformedVerts.append(v1)

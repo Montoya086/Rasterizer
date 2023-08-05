@@ -1,11 +1,16 @@
 import MontiMaths as mm
+
 def vertexShader(vertex, **kwargs):
     modelMatrix = kwargs["modelMatrix"]
+    viewMatrix = kwargs["viewMatrix"]
+    projectionMatrix = kwargs["projectionMatrix"]
+    vpMatrix = kwargs["vpMatrix"]
     vt = [vertex[0],
           vertex[1],
           vertex[2],
           1]
-    vt = mm.matVectMult(modelMatrix,vt)
+    mats= mm.nMatMult([vpMatrix, projectionMatrix, viewMatrix, modelMatrix])
+    vt = mm.matVectMult(mats,vt)
     vt = [vt[0]/vt[3], 
           vt[1]/vt[3], 
           vt[2]/vt[3]]

@@ -1,3 +1,5 @@
+import math
+
 def nMatMult(mats):
     res = [[1,0,0,0],
            [0,1,0,0],
@@ -26,6 +28,8 @@ def matVectMult(mat, vect):
                 res[x] += mat[x][y] * vect[y]
     return res
 
+#baricentric coordinates
+
 def barycentricCoords(A, B, C, P):
     areaPCB = (B[1]-C[1])*(P[0]-C[0])+(C[0]-B[0])*(P[1]-C[1])
     
@@ -41,4 +45,72 @@ def barycentricCoords(A, B, C, P):
     except:
         return -1,-1,-1
 
-   
+
+#inverse of a matrix
+
+def subMat(matrix, row, col):
+    #obtain the submatrix of a matrix
+    return [row[:col] + row[col + 1:] for row in (matrix[:row] + matrix[row + 1:])]
+
+def matCofact(matrix, row, col):
+    #obtain the cofactor of a matrix
+    return (-1) ** (row + col) * matDet(subMat(matrix, row, col))
+
+def matDet(matrix):
+    n = len(matrix)
+    # base case for 2x2 matrix
+    if n == 1:
+        return matrix[0][0]
+    # case for 3x3 matrix
+    if n == 2:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+    det = 0
+    # case for any larger square matrix
+    for col in range(n):
+        det += matrix[0][col] * matCofact(matrix, 0, col)
+    return det
+
+def matTranspose(matrix):
+    #obtain the transpose of a matrix
+    return [[matrix[j][i] for j in range( len(matrix))] for i in range(len(matrix[0] ))]
+
+def inverseMat(matrix):
+    #obtain the inverse of a matrix
+    det = matDet(matrix)
+    #check if the matrix is singular
+    if(det== 0):
+        raise ValueError("Can't find inverse of singular matrix (Determinant is 0)")
+
+    n = len(matrix)
+    #adjugate matrix
+    adjMatrix = [[matCofact(matrix, i, j) for j in range(n)] for i in range(n)]
+    adjMatrix = matTranspose(adjMatrix)
+
+    #inverse matrix
+    invMatrix = [[adjMatrix[i][j] / det for j in range(n)] for i in range(n)]
+    return invMatrix
+
+def subVec(v0, v1):
+    #substraction of two vectors
+    return (v0[0]-v1[0], v0[1]-v1[1], v0[2]-v1[2])
+
+def normVec(vector):
+    vectorList = list(vector)
+
+    magnitude = math.sqrt(sum(component ** 2 for component in vectorList))
+    
+    if magnitude == 0:
+        raise ValueError("Can't normalize the zero vector")
+    
+    normVector = [component / magnitude for component in vectorList]
+
+    # Convertir la lista nuevamente a una tupla
+    normVector = tuple(normVector)
+    return normVector
+
+def crossProd(v0, v1):
+    #cross product of two vectors
+    x = v0[1]*v1[2] - v0[2]*v1[1]
+    y = v0[2]*v1[0] - v0[0]*v1[2]
+    z = v0[0]*v1[1] - v0[1]*v1[0]
+    return (x,y,z)
