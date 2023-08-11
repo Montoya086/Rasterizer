@@ -1,30 +1,21 @@
 from gl import Renderer, V2,V3, color
 import random, shaders
-width = 1080
-height = 720
+width = 500
+height = 500
 
 rend = Renderer(width, height)
-
+rend.glClearColor(0.5,0.5,0.5)
+rend.glClear()
 rend.vertexShader=shaders.vertexShader
-rend.fragmentShader=shaders.fragmentShader
+rend.fragmentShader=shaders.gouradShader
 
-#rend.glLookAt(camPos=(0,-3,0),
-#             eyePos=(0,-2,-3))
-rend.glCameraMatrix(translate=(0,-2,0),
-                    rotate=(0,0,15))
-
-#Right: -90,0,90
-#Back: -90,0,0
-#Front: -90,0,-180
-#Left: -90,0,-90
-
-rend.glLoadModel(filename="./models/cone/object.obj", 
-                 textureName="./models/cone/texture.bmp", 
-                 translate=(0, -3, -3), 
-                 scale=(4,4,4), 
-                 rotate=(0,0,0))
-
-
+#MediumShot
+rend.glLookAt(camPos=(0,-1.5,0.5),
+             eyePos=(0,-2,-3))
+rend.glLoadModel(filename="./models/skull/object.obj", 
+                 textureName="./models/skull/texture.bmp", 
+                 translate=(0, -2.8, -3), 
+                 scale=(0.07,0.07,0.07), 
+                 rotate=(-90,0,0))
 rend.glRender() 
-
-rend.glFinish("./renders/cone/DutchAngle.bmp") 
+rend.glFinish("./renders/skull/SkullShader1.bmp")

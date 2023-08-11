@@ -111,3 +111,13 @@ def crossProd(v0, v1):
     y = v0[2]*v1[0] - v0[0]*v1[2]
     z = v0[0]*v1[1] - v0[1]*v1[0]
     return (x,y,z)
+
+def dotProd(v0, v1):
+    vect0 = list(v0)
+    vect1 = list(v1)
+    #dot product of two vectors
+    return sum((a*b) for a, b in zip(vect0, vect1))
+
+def negativeTuple(t):
+    #negative of a tuple
+    return (-t[0],-t[1],-t[2])
