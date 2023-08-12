@@ -7,7 +7,7 @@ rend = Renderer(width, height)
 rend.glClearColor(0.5,0.5,0.5)
 rend.glClear()
 rend.vertexShader=shaders.vertexShader
-rend.fragmentShader=shaders.gouradShader
+rend.fragmentShader=shaders.pixelationShader
 
 #MediumShot
 rend.glLookAt(camPos=(0,-1.5,0.5),
@@ -18,4 +18,4 @@ rend.glLoadModel(filename="./models/skull/object.obj",
                  scale=(0.07,0.07,0.07), 
                  rotate=(-90,0,0))
 rend.glRender() 
-rend.glFinish("./renders/skull/SkullShader1.bmp")
+rend.glFinish("./renders/skull/Shaders/PixelationShader.bmp")

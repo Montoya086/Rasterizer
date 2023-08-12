@@ -86,3 +86,120 @@ def gouradShader(**kwargs):
 
     else:
         return [0,0,0]
+    
+
+def celShader(**kwargs):
+    intensity = 0.85
+    edgeSens = 0.7
+    
+    r, g, b = gouradShader(**kwargs) 
+    
+    gintensity = 0.2989 * r + 0.5870 * g + 0.1140 * b
+    
+    if gintensity > edgeSens:
+        return r, g, b 
+    
+    if gintensity > intensity:
+        return [0, 0, 0]
+    else:
+        return [0, 0, 0]
+    
+def negativeShader(**kwargs):
+    r, g, b = gouradShader(**kwargs)  
+    
+    invR = 1.0 - r
+    invG = 1.0 - g
+    invB = 1.0 - b
+    
+    return invR, invG, invB
+
+def noiseShader(**kwargs):
+    texture = kwargs["texture"]
+    tA, tB, tC = kwargs["texCoords"]
+    u, v, w = kwargs["bCoords"]
+    
+    if texture is not None:
+        tU = u * tA[0] + v * tB[0] + w * tC[0]
+        tV = u * tA[1] + v * tB[1] + w * tC[1]
+        
+        noiseIntensity = 0.05
+        
+        weight = 0.0
+        color = [0.0, 0.0, 0.0]
+        
+        for offsetY in range(-1, 2):
+            for offsetX in range(-1, 2):
+                offsetTexX = tU + offsetX * noiseIntensity
+                offsetTexY = tV + offsetY * noiseIntensity
+                
+                baseColor = texture.getColor(offsetTexX, offsetTexY)
+                baseWeight = 1.0 
+                
+                weight += baseWeight
+                if baseColor is None:
+                  baseColor = [0.0, 0.0, 0.0]   
+
+                color[0] += baseColor[0] * baseWeight
+                color[1] += baseColor[1] * baseWeight
+                color[2] += baseColor[2] * baseWeight
+        
+        color[0] /= weight
+        color[1] /= weight
+        color[2] /= weight
+        
+        return color
+    else:
+        return [0.0, 0.0, 0.0] 
+    
+def pixelationShader(**kwargs):
+    texture = kwargs["texture"]
+    tA, tB, tC = kwargs["texCoords"]
+    u, v, w = kwargs["bCoords"]
+    
+    if texture is not None:
+        tU = u * tA[0] + v * tB[0] + w * tC[0]
+        tV = u * tA[1] + v * tB[1] + w * tC[1]
+        
+        factor=150  
+        
+        pixelSizeX= 1.0/factor
+        pixelSizeY= 1.0/factor
+        
+        blockX = int(tU/pixelSizeX)*pixelSizeX
+        blockY = int(tV/pixelSizeY)*pixelSizeY
+        
+        color = texture.getColor(blockX, blockY)
+        
+        return color
+    else:
+        return [0,0,0] 
+    
+
+def embossShader(**kwargs):
+    texture = kwargs["texture"]
+    tA, tB, tC = kwargs["texCoords"]
+    u, v, w = kwargs["bCoords"]
+    
+    if texture is not None:
+        tU = u * tA[0] + v * tB[0] + w * tC[0]
+        tV = u * tA[1] + v * tB[1] + w * tC[1]
+        
+        strength = 0.5
+        
+        color = texture.getColor(tU, tV)
+        color2 = texture.getColor(tU - 0.01, tV - 0.01) 
+
+        if color2 is None:
+            color2 = [0.0, 0.0, 0.0]
+        if color is None:
+            color = [0.0, 0.0, 0.0]
+        
+        r = (color[0] - color2[0]) * strength + 0.5
+        g = (color[1] - color2[1]) * strength + 0.5
+        b = (color[2] - color2[2]) * strength + 0.5
+        
+        embossed = [r, g, b]
+        
+        return embossed
+    else:
+        return [0.0, 0.0, 0.0]
