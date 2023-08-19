@@ -1,4 +1,5 @@
 import MontiMaths as mm
+import math
 
 def vertexShader(vertex, **kwargs):
     modelMatrix = kwargs["modelMatrix"]
@@ -57,6 +58,7 @@ def gouradShader(**kwargs):
     nA, nB, nC= kwargs["normals"]
     dLight = kwargs["dLight"]
     u, v, w= kwargs["bCoords"]
+    modelMatrix = kwargs["modelMatrix"]
 
     b= 1.0
     g= 1.0
@@ -73,13 +75,21 @@ def gouradShader(**kwargs):
 
     normal= [u * nA[0] + v * nB[0] + w * nC[0],
              u * nA[1] + v * nB[1] + w * nC[1],
-             u * nA[2] + v * nB[2] + w * nC[2]]
+             u * nA[2] + v * nB[2] + w * nC[2],
+             0]
+    
+    normal = mm.matVectMult(modelMatrix, normal)
+    normal = mm.normVec((normal[0], normal[1], normal[2]))
     
     intensity = mm.dotProd(normal, mm.negativeTuple(dLight))
     
     b *= intensity
     g *= intensity
     r *= intensity
+
+    b = min(b, 1.0)
+    g = min(g, 1.0)
+    r = min(r, 1.0)
 
     if intensity > 0:
         return r, g, b
@@ -160,7 +170,7 @@ def pixelationShader(**kwargs):
         tU = u * tA[0] + v * tB[0] + w * tC[0]
         tV = u * tA[1] + v * tB[1] + w * tC[1]
         
-        factor=150  
+        factor=300  
         
         pixelSizeX= 1.0/factor
         pixelSizeY= 1.0/factor
@@ -203,3 +213,15 @@ def embossShader(**kwargs):
         return embossed
     else:
         return [0.0, 0.0, 0.0]
+    
+def brighterColorsShader(**kwargs):
+    r, g, b = gouradShader(**kwargs)
+    
+    intensity = (r + g + b) / 3.0
+    
+    factor = 2.0 + intensity
+    
+    r = min(r * factor, 1.0)
+    g = min(g * factor/1.5, 1.0)
+    
+    return [r, g, b]

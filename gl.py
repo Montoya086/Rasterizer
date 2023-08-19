@@ -50,17 +50,21 @@ class Renderer(object):
         self.glClearColor(0,0,0)
         self.glClear()
         self.glColor(1,1,1)
+        self.background = None
         self.objects = []
         self.vertexShader = None
         self.fragmentShader = None
         self.primitiveType = TRIANGLES
         self.vertexBuffer=[ ]
         self.activeTexture = None
+        self.activeModelmatrix = None
         self.glViewport(0,0,self.width,self.height)
         self.glCameraMatrix()
         self.glProjectionMatrix()
-        self.directionalLight = (0,1,0)
+        self.directionalLight = (0,0,0)
         
+    def glDirectionalLight(self, x,y,z):
+        self.directionalLight = mm.normVec((x,y,z))
 
     def glAddVertices(self, vertices):
         for vert in vertices:
@@ -93,6 +97,20 @@ class Renderer(object):
         
         return primitives
 
+    def glBackgroundTexture(self, filename):
+        self.background = Texture(filename)
+
+    def clearBackground(self):
+        self.glClear()
+
+        if self.background:
+            for x in range(self.vpX, self.vpX+self.vpWidth+1):
+                for y in range(self.vpY, self.vpY+self.vpHeight+1):
+                    u=(x-self.vpX)/self.vpWidth
+                    v=(y-self.vpY)/self.vpHeight
+                    texColor = self.background.getColor(u, v)
+                    if texColor:
+                        self.glPoint(x,y,color(texColor[0],texColor[1],texColor[2]))
 
     def glClearColor(self, r, g, b):
         self.clearColor = color(r,g,b)
@@ -147,7 +165,8 @@ class Renderer(object):
                                                              texCoords = texCoords,
                                                              normals = normals,
                                                              dLight = self.directionalLight,
-                                                             bCoords = bCoords)
+                                                             bCoords = bCoords,
+                                                             modelMatrix = self.activeModelmatrix)
                                 
                                 self.glPoint(x,y,color(colorP[0],colorP[1],colorP[2]))
                             else:
@@ -299,7 +318,7 @@ class Renderer(object):
         for model in self.objects:
 
             self.activeTexture = model.texture
-            mMatrix = self.glModelMatrix(model.translate, model.rotate ,model.scale)
+            self.activeModelmatrix = self.glModelMatrix(model.translate, model.rotate ,model.scale)
 
             for face in model.faces:
                 vertCount = len(face)
@@ -320,23 +339,23 @@ class Renderer(object):
 
                 if self.vertexShader:
                     v0=self.vertexShader(v0, 
-                                         modelMatrix=mMatrix,
+                                         modelMatrix=self.activeModelmatrix,
                                          viewMatrix=self.viewMatrix,
                                          projectionMatrix=self.projectionMatrix,
                                          vpMatrix=self.vpMatrix)
                     v1=self.vertexShader(v1, 
-                                         modelMatrix=mMatrix,
+                                         modelMatrix=self.activeModelmatrix,
                                          viewMatrix=self.viewMatrix,
                                          projectionMatrix=self.projectionMatrix,
                                          vpMatrix=self.vpMatrix)
                     v2=self.vertexShader(v2, 
-                                         modelMatrix=mMatrix,
+                                         modelMatrix=self.activeModelmatrix,
                                          viewMatrix=self.viewMatrix,
                                          projectionMatrix=self.projectionMatrix,
                                          vpMatrix=self.vpMatrix)
                     if vertCount == 4:
                         v3=self.vertexShader(v3, 
-                                         modelMatrix=mMatrix,
+                                         modelMatrix=self.activeModelmatrix,
                                          viewMatrix=self.viewMatrix,
                                          projectionMatrix=self.projectionMatrix,
                                          vpMatrix=self.vpMatrix)
