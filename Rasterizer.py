@@ -22,7 +22,7 @@ rend.glLookAt(camPos=(0,-1.5,-0.6),
 
 #Skull
 #rend.fragmentShader=shaders.celShader
-rend.glDirectionalLight(1,0,0)
+rend.glDirectionalLight(1,-0.6,0)
 rend.glLoadModel(filename="./models/skull/object.obj", 
                  textureName="./models/skull/texture.bmp", 
                  translate=(0.5, -2, -2.5), 
@@ -52,7 +52,7 @@ rend.glRender()
 
 #Books
 #rend.fragmentShader=shaders.negativeShader
-rend.glDirectionalLight(-1,0,0)
+rend.glDirectionalLight(-1,-0.6,0)
 rend.glLoadModel(filename="./models/books/object.obj", 
                  textureName="./models/books/texture.bmp", 
                  translate=(-0.7, -2, -2.55), 
