@@ -151,4 +151,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-*.bmp
+renders/
+models/amongus/
+models/cone/
+models/face/
+models/horse/
+models/pin/

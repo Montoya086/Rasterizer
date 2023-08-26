@@ -100,7 +100,7 @@ def gouradShader(**kwargs):
 
 def celShader(**kwargs):
     intensity = 0.85
-    edgeSens = 0.7
+    edgeSens = 0.4
     
     r, g, b = gouradShader(**kwargs) 
     

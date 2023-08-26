@@ -13,7 +13,7 @@ rend.vertexShader=shaders.vertexShader
 #rend.fragmentShader=shaders.embossShader
 #rend.fragmentShader=shaders.pixelationShader
 #rend.fragmentShader=shaders.noiseShader
-rend.fragmentShader=shaders.gouradShader
+#rend.fragmentShader=shaders.gouradShader
 
 #Camera
 rend.glLookAt(camPos=(0,-1.5,-0.6),
@@ -21,17 +21,17 @@ rend.glLookAt(camPos=(0,-1.5,-0.6),
 
 
 #Skull
-#rend.fragmentShader=shaders.celShader
-rend.glDirectionalLight(1,-0.6,0)
+rend.fragmentShader=shaders.celShader
+rend.glDirectionalLight(1,-0.6,-1)
 rend.glLoadModel(filename="./models/skull/object.obj", 
                  textureName="./models/skull/texture.bmp", 
                  translate=(0.5, -2, -2.5), 
-                 scale=(0.01,0.01,0.01), 
+                 scale=(0.015,0.015,0.015), 
                  rotate=(-90,0,-20))
 rend.glRender()
 
 #Desk
-#rend.fragmentShader=shaders.pixelationShader
+rend.fragmentShader=shaders.pixelationShader
 rend.glDirectionalLight(0,-1,0)
 rend.glLoadModel(filename="./models/desk/object.obj", 
                  textureName="./models/desk/texture.bmp", 
@@ -41,7 +41,7 @@ rend.glLoadModel(filename="./models/desk/object.obj",
 rend.glRender()
 
 #Candle
-#rend.fragmentShader=shaders.brighterColorsShader
+rend.fragmentShader=shaders.brighterColorsShader
 rend.glDirectionalLight(0,-1,0)
 rend.glLoadModel(filename="./models/candle/object.obj", 
                  textureName="./models/candle/texture.bmp", 
@@ -51,7 +51,7 @@ rend.glLoadModel(filename="./models/candle/object.obj",
 rend.glRender()
 
 #Books
-#rend.fragmentShader=shaders.negativeShader
+rend.fragmentShader=shaders.negativeShader
 rend.glDirectionalLight(-1,-0.6,0)
 rend.glLoadModel(filename="./models/books/object.obj", 
                  textureName="./models/books/texture.bmp", 
@@ -61,4 +61,4 @@ rend.glLoadModel(filename="./models/books/object.obj",
 rend.glRender()
 
 #Generate render
-rend.glFinish("./scenes/MedievalDeskScene.bmp")
+rend.glFinish("./scenes/MedievalDeskSceneWithShader.bmp")
